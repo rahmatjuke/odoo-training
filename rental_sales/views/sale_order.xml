@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="inherit_sale_order_tree_views_sales_rental" model="ir.ui.view">
+    <field name="name">sale.order.view.tree.inherit</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//field[@name='amount_total']" position="before">
+        <field name="rental_start_date" optional="show" readonly="1" on_change="1"/>
+        <field name="rental_return_date" optional="show" readonly="1" on_change="1"/>
+        <field name="duration_days" optional="show" readonly="1" on_change="1"/>
+        <field
+          name="rental_status"
+          decoration-success="rental_status == 'reserved'"
+          decoration-primary="rental_status == 'returned'"
+          decoration-danger="rental_status == 'cancelled'"
+          decoration-muted="rental_status == 'draft'"
+          widget="badge"
+          optional="show"
+        />
+      </xpath>
+    </field>
+  </record>
+
+  <record id="inherit_sale_order_form_views_sales_rental" model="ir.ui.view">
+    <field name="name">sale.order.view.form.inherit</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//group[@name='partner_details']" position="inside">
+        <field name="is_rental_order"/>
+        <field name="rental_start_date" invisible="is_rental_order != True" required="is_rental_order == True"/>
+        <field name="rental_return_date" invisible="is_rental_order != True" required="is_rental_order == True"/>
+        <field name="duration_days" readonly="1" invisible="is_rental_order != True" required="is_rental_order == True"/>
+        <field name="rental_status" invisible="is_rental_order != True" required="is_rental_order == True"/>
+      </xpath>
+      <xpath expr="//field[@name='state']" position="before">
+        <button name="action_reserve" string="Reserve" type="object" class="btn-primary" invisible="state != 'sales_orders' and rental_status != 'draft'"/>
+        <button name="action_turn_in" string="Turn In" type="object" class="btn-primary" invisible="rental_status != 'reserved'"/>
+      </xpath>
+      <xpath expr="//field[@name='product_template_id']" position="attributes">
+        <attribute name="domain">[('sale_ok', '=', True), ('is_rent', '=', True)]</attribute>
+      </xpath>
+    </field>
+  </record>
+
+  <record id="rental_sale_order_action" model="ir.actions.act_window">
+    <field name="name">Rental Sale Order</field>
+    <field name="res_model">sale.order</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

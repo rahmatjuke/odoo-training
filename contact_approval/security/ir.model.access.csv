@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contact_approval_user,contact_approval_user,model_contact_approval,base.group_user,1,0,0,0
+access_contact_approval_admin,contact_approval_admin,model_contact_approval,group_contact_approval_manager,1,1,1,1
